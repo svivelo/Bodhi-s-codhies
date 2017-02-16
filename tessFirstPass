@@ -1,0 +1,112 @@
+# February 15 2017
+# Script to process seven ameriflux sites and plot two variables 
+#
+#
+#
+#
+########################################
+
+# The variables I want to sort my files by
+#  20 W m^-2 or 
+# 16 half hours in a day
+# how many days in a month = 20
+# Month in season? = 2
+# NA's 
+# Number of days in a month
+
+# Load up ameriflux csv's
+
+us.bar<- read.csv("AMF_US-Bar_BASE_HH_4-1.csv", header = TRUE)
+us.ha1<-read.csv("AMF_US-Ha1_BASE_HR_10-1.csv", header = TRUE)
+us.ha2<-read.csv("AMF_US-Ha2_BASE_HH_2-1.csv", header = TRUE)
+us.ho1<-read.csv("AMF_US-Ho1_BASE_HH_4-1.csv", header = TRUE)
+us.lph<-read.csv("AMF_US-LPH_BASE_HH_1-1.csv", header = TRUE)
+us.mms<-read.csv("AMF_US-MMS_BASE_HR_8-1.csv", header = TRUE)
+us.umb<-read.csv("AMF_US-UMB_BASE_HR_10-1.csv", header = TRUE)
+
+# set "-9999" to NA's 
+
+us.bar[us.bar == "-9999"]<- NA
+us.ha1[us.ha1 == "-9999"]<- NA
+us.ha2[us.ha2 == "-9999"]<- NA
+us.ho1[us.ho1 == "-9999"]<- NA
+us.lph[us.lph == "-9999"]<- NA
+us.mms[us.mms == "-9999"]<- NA
+us.umb[us.umb == "-9999"]<- NA
+
+# add a date column
+lat_Bar <- 44.06
+lat_Ha_LPH <- 42.54
+lat_Ho <- 45.20
+lat_MMS <- 39.32
+lat_UMB <- 45.56
+require(lubridate)
+require(geosphere)
+options(scipen=999)
+
+
+format_date_time <- function(x) {
+	ymd_hm_dates <- ymd_hm(as.character(x))
+	return(ymd_hm_dates)
+}
+
+format_date_time(200412210630)
+ymd_hm_dates <- lapply(loop_date_test, format_date_time)
+
+#daylength(lat_Bar, )
+
+
+
+# Add a day length column 
+library(geosphere) # has a function for daylength 
+
+
+daylength(30,as.Date(ymd_hm(as.character(200412210630))))
+
+# Psudo code for the sorting structure
+# MOY = Month of Year
+# DOM Day of month
+for (i in MOY) {
+	monthVector <- dateColumn[dateColumn$MOY == MOY]
+	if(length (monthVector)>= MonthTHreshold){
+		
+for ( i in DOM ){
+ 	vector <- dateColumn[dateColumn$DOY == DOY]
+  if (length(vector)>= TimeThreshold){
+  	if (vector$dayLength >= DayThreshold) {
+  	#load row into monthVector
+  	}
+  }
+} # Second For loop
+	}
+} # First For loop 
+
+
+
+
+# Psudo code for the sorting structure
+# MOY = Mothe of Year
+# DOM Day of month
+
+# Filter NA's 
+# subset only relevant columns
+# Then run an na.omit
+# Vars we need LE (latent heat flux)
+# Also need VPD
+# NEE or NEE_PI
+# Also Temperature (Soil and Air) We might get rid of one later. Air is better. 
+
+for ( i in DOY ){
+	vector <- dateColumn[dateColumn$DOY == DOY]
+	if (length(vector)>= TimeThreshold){
+		if (vector$dayLength >= DayThreshold) {
+			#load row into NewObject For month based sorting
+		}
+	}
+	
+for(i in MOY ){
+	vector<-dateColumn[dateColumn$MOY == MOY]
+	if (length(vector)>= DayInMonthThreshold){
+		#load into final object for plotting 
+}
+
