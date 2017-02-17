@@ -1,0 +1,42 @@
+################
+#Read in data
+################
+#set working directory
+setwd("~/Documents/GE 720/AMF_US-Bar_BASE-BADM_4-1")
+##disable scientific notation
+options(scipen=999)
+
+bar_data <- read.csv("~/Documents/GE 720/AMF_US-Bar_BASE-BADM_4-1/AMF_US-Bar_BASE_HH_4-1.csv", header = TRUE)
+
+#subset for daytime
+solar_radiation <- bar_data$SW_IN
+day_bar_data <- subset(bar_data, solar_radiation > 20)
+
+#break apart timestamp vector to year month and day only
+require(data.table)
+day_bar_data <- data.table(day_bar_data)
+day_bar_data$day <- substr(day_bar_data$TIMESTAMP_START,1,8)
+
+#aggregate and average by day
+day_avg <- aggregate(NEE_PI ~ day, FUN=mean, data = day_bar_data)
+day_avg$LE <- aggregate(LE ~ day, FUN=mean, data = day_bar_data)[,2]
+
+#break apart timestamp vector to year and month only
+day_bar_data$month <- substr(day_bar_data$TIMESTAMP_START,1,6)
+
+#aggregate and average by month
+month_avg <- aggregate(NEE_PI ~ month, FUN=mean, data = day_bar_data)
+month_avg$LE <- aggregate(LE ~ month, FUN=mean, data = day_bar_data)
+
+#break apart timestamp vector to month only
+day_bar_data$month_only <- substr(day_bar_data$TIMESTAMP_START,5,6)
+
+summer_day_bar_data <- subset(day_bar_data, month_only == "06" | month_only == "07" | month_only == "08")
+
+#aggregate and average summer months
+summer_avg_NEE <- aggregate(NEE_PI ~ month, FUN=mean, data = summer_day_bar_data)
+summer_avg_LE <- aggregate(LE ~ month, FUN=mean, data = summer_day_bar_data)
+
+#obtain ratio of carbon uptake to latent heat of evaporation
+ratio <- summer_avg_NEE$NEE_PI/summer_avg_LE$LE
+
